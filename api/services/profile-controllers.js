@@ -3,6 +3,7 @@ const productcollection = require('../../models/productmodel')
 const ordercollection = require('../../models/order')
 const { CallPage } = require('twilio/lib/rest/api/v2010/account/call')
 const Razorpay = require('razorpay');
+const easyinvoice = require('easyinvoice');
 // const mongoose = require('mongoose');
 // const { MongoClient, ObjectId } = require('mongodb');
 
@@ -538,6 +539,105 @@ const orderReturn = async (req, res) => {
 
 
 
+const generateInvoice = async (order, orderProducts, address ) => {
+    try {
+        const invoiceOptions = {
+            documentTitle: 'Invoice',
+            currency: 'INR',
+            taxNotation: 'GST',
+            marginTop: 25,
+            marginRight: 25,
+            marginLeft: 25,
+            marginBottom: 25,
+            images: {
+                logo: '',
+            },
+            sender: {
+                company: 'E-Shop',
+                address: 'Kazhakuttam',
+                zip: '695121',
+                city: 'Trivandrum',
+                country: 'Kerala',
+                phone: '759-857-0568',
+            },
+            client: {
+                company: address.name,
+                address: address.houseName,
+                zip: address.street,
+                city: address.city,
+                country: address.phone,
+                phone: address.postalCode
+            },
+            information: {
+                Number: order.map(item=>item._id),
+                Date: order.map(item=>item.createdAt.toLocaleDateString()),
+                Delevery_Date: order.map(item=>item.expectedDelivery.toLocaleDateString())
+            },
+            products: [],
+           
+            bottomNotice: 'Discount: $10',
+            subtotal: 185,
+            total: 175,
+        };
+        orderProducts.forEach((data) => {
+            invoiceOptions.products.push({
+                quantity: data.quantity,
+                description: data.p_name,
+                'tax-rate': 0,
+                price: data.price, 
+            });
+        });
+        const result = await easyinvoice.createInvoice(invoiceOptions);
+        const pdfBuffer = Buffer.from(result.pdf, 'base64');
+
+        return pdfBuffer;
+    } catch (error) {
+        console.log('Error generating invoice:', error);
+        throw error;
+    }
+};
+
+
+const pdf = async (req, res) => {
+    try {
+        const orderId = req.query.id;
+        const userDetails = await usercollection.findOne({ email: req.session.user });
+        const order = await ordercollection.find({ _id: orderId });
+        const orderProducts = order.map(items => items.productdetails).flat();
+        console.log('this is the orderProducts');
+        // console.log(orderProducts);
+        // const cartProducts = order.map(items => items.cartProduct).flat();
+        // console.log(cartProducts)
+        // for (let i = 0; i < orderProducts.length; i++) {
+        //     const orderProductId = orderProducts[i]._id;
+        //     const matchingCartProduct = cartProducts.find(cartProduct => cartProduct.productId.toString() === orderProductId.toString());
+
+        //     if (matchingCartProduct) {
+        //         orderProducts[i].cartProduct = matchingCartProduct;
+        //     }
+        // }
+
+
+
+        const address = userDetails.address.find(items => items._id.toString() == order.map(items => items.address).toString());
+        // const subTotal = orderProducts.reduce((totals, items) => totals + items.realPrice, 0);
+        // const [orderCanceld] = order.map(item => item.orderCancleRequest);
+        const orderStatus = order.map(item => item.status);
+    
+        const invoiceBuffer = await generateInvoice(order, orderProducts, address, orderStatus );
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename = invoice.pdf');
+        res.send(invoiceBuffer);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+        res.status(500).render('404-error', {  error:500, message:'Internal Server Error' });
+    }
+};
+
+
+
+
 module.exports = {
     profile,
     order,
@@ -545,6 +645,7 @@ module.exports = {
     orderCancel,
     successTick,
     productCancel,
+    pdf,
 
     loadWallet,
     topUpWallet,

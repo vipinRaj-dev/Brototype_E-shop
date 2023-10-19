@@ -271,34 +271,34 @@ const login_post = async (req, res) => {
                         let cartCount;
 
                        //-------------add this to remove the otp validation 
-                        req.session.user = userdata.email
-                        console.log(req.session.user);
-                        res.redirect('/')
+                        // req.session.user = userdata.email
+                        // console.log(req.session.user);
+                        // res.redirect('/')
 
                          
                         //-----------add this to add the otp validation
 
-                        // req.session.data = userdata.email;
+                        req.session.data = userdata.email;
                         // otp generator
-                        // try {
-                        //     let entrie = 0;
-                        //     let randomOTP = Math.floor(Math.random() * 9000) + 1000;
-                        //     console.log('This is your login OTP:', randomOTP);
+                        try {
+                            let entrie = 0;
+                            let randomOTP = Math.floor(Math.random() * 9000) + 1000;
+                            console.log('This is your login OTP:', randomOTP);
 
-                        //     // // Save the random OTP number to the database
-                        //     const newUser = new otpcollection({
-                        //         number: randomOTP
-                        //     });
+                            // // Save the random OTP number to the database
+                            const newUser = new otpcollection({
+                                number: randomOTP
+                            });
 
-                        //     await newUser.save();
+                            await newUser.save();
 
-                        //     res.render('user/validation', { user: req.session.user,cartCount, entrie });
-                        // } catch (error) {
-                        //     console.log("Error generating OTP:", error);
-                        //     res.status(500).send("OTP error");
-                        //     const message = error.message;
-                        //     res.status(500).render('404-error', { error, message });
-                        // }
+                            res.render('user/validation', { user: req.session.user,cartCount, entrie });
+                        } catch (error) {
+                            console.log("Error generating OTP:", error);
+                            res.status(500).send("OTP error");
+                            const message = error.message;
+                            res.status(500).render('404-error', { error, message });
+                        }
 
                         //------------------otp validation till this
 

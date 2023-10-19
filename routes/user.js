@@ -72,6 +72,8 @@ user_route.get('/profile/orderCancel',profilecontrollers.productCancel)
 
 user_route.get('/success',profilecontrollers.successTick)
 
+user_route.get('/profile/invoice',userAuth.isblock,profilecontrollers.pdf)
+
 
 //wishlist
 user_route.get('/wishlist',userController.WhishListLoad)
