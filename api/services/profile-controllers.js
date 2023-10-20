@@ -199,6 +199,7 @@ const productCancel = async (req, res) => {
         }else{
             productToCancel.cancelProduct = true;
             order.payment.amount = order.payment.amount - productToCancel.totalPrice;
+            
             // console.log(order.payment.amount)
         }
         // Set the cancelProduct field to true for the found product

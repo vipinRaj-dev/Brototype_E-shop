@@ -35,11 +35,11 @@ user_route.get('/product-view/:id',userController.productView)
 
 
 //search products
-user_route.post('/search',userController.search_product)
+user_route.post('/search',userAuth.isblock,userController.search_product)
 
 
 //shop
-user_route.get('/shop',userAuth.userChecking,userController.shop)
+user_route.get('/shop',userAuth.isblock,userAuth.userChecking,userController.shop)
 
 
 //filtering products
@@ -53,9 +53,9 @@ user_route.post('/cart/quantityUpdate/:itemId', userController.cartQuantityUpdat
 user_route.post('/cartDelete/:id', userController.cartDelete);
 
 //checkout page
-user_route.get('/CheckOutPage',userController.Checkout)
+user_route.get('/CheckOutPage',userAuth.isblock,userController.Checkout)
 user_route.post('/AddressUpdate',userController.addressAdding)
-user_route.post('/CheckOut',userController.orderSuccess)
+user_route.post('/CheckOut',userAuth.isblock,userController.orderSuccess)
 
 
 user_route.post('/saveOrderData',userController.savingData)
@@ -63,9 +63,9 @@ user_route.post('/saveOrderData',userController.savingData)
  
 
 //profile details
-user_route.get('/profile',profilecontrollers.profile)
-user_route.get('/profile/order',profilecontrollers.order)   
-user_route.post('/profile/orderStatus/:id',profilecontrollers.orderStatus)
+user_route.get('/profile',userAuth.isblock,profilecontrollers.profile)
+user_route.get('/profile/order',userAuth.isblock,profilecontrollers.order)   
+user_route.post('/profile/orderStatus/:id',userAuth.isblock,profilecontrollers.orderStatus)
 user_route.post('/profile/order/:id',profilecontrollers.orderCancel)
 
 user_route.get('/profile/orderCancel',profilecontrollers.productCancel)
@@ -76,7 +76,7 @@ user_route.get('/profile/invoice',userAuth.isblock,profilecontrollers.pdf)
 
 
 //wishlist
-user_route.get('/wishlist',userController.WhishListLoad)
+user_route.get('/wishlist',userAuth.isblock,userController.WhishListLoad)
 
 user_route.post('/wishlist/:id',userController.addingWhishList)
 

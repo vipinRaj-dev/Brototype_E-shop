@@ -1138,3 +1138,11 @@ table.table td i {
 .pagination .page-link:hover {
   background-color: #8a98a6;
 }
+
+
+.ellipsis-row td {
+  max-width: 200px; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
