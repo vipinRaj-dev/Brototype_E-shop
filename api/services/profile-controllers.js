@@ -176,6 +176,8 @@ const productCancel = async (req, res) => {
         console.log('reached the product cancel');
         const orderId = req.query.orderId; // Extract orderId from query parameters
         const productId = req.query.productId; // Extract productId from query parameters
+
+        
        
         const order = await ordercollection.findById(orderId);
 
@@ -459,6 +461,7 @@ const profileUpdate = async (req, res) => {
 } 
 const { ObjectId } = require('mongodb');
 const { default: mongoose } = require('mongoose');
+const productCollection = require('../../models/productmodel');
 
 const listReturn = async (req, res) => {
     try {

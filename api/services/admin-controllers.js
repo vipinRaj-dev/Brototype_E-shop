@@ -90,7 +90,7 @@ const dashboard = async(req,res)=>{
 }
 
 const graph = async (req, res) => {
-    try {
+    try { 
       console.log("req.body",req.body);
      const { categoryname, salesRe, year, month, today } = req.body;
       

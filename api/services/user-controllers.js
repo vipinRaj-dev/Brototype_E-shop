@@ -626,6 +626,8 @@ const shop = async (req, res) => {
      const cat_name = req.body.category;
      
      const sortFilter = req.body.sortOption;
+
+    //  console.log(`this is the category name ${cat_name},and the sort direction ${sortFilter}`);
      
      let sortDirection = 1; // Default ascending
      if (sortFilter === 'HeighToLow') {
@@ -633,8 +635,14 @@ const shop = async (req, res) => {
      }
      
      const category = await categoryCollection.find({isavilable:true})
-     const products = await productCollection.find({category:cat_name,availability:true}).sort({ price: sortDirection});
- 
+     let products;
+     if(cat_name){
+          products = await productCollection.find({category:cat_name,availability:true}).sort({ price: sortDirection});
+     }else{
+        products = await productCollection.find({availability:true}).sort({price:sortDirection})
+     }
+     
+    //  console.log('this is the filter products');
     //  console.log(products)
      res.render('user/shop', {products,category,name,user: req.session.user,cartCount,sortFilter,cat_name,priceRange:'Price-'});
    }catch(error){
