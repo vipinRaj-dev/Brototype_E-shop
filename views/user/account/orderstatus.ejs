@@ -107,10 +107,17 @@
                                                                         <td class="fw-bold text-end" style="color: #959595;"><%= orderObject.payment.transactionId%> </td>
                                                                     </tr>
                                                                 <% } %>
+
+                                                                <% if ( orderObject.couponDetails.couponAmount !== 0) { %>
+                                                                    <tr>
+                                                                        <td colspan="2" class="fw-bold" style="color: #959595;">Coupon Applied (<%= orderObject.couponDetails.couponName %>)</td>
+                                                                        <td class="fw-bold text-end" style="color: #959595;"><%= orderObject.couponDetails.couponAmount%> </td>
+                                                                    </tr>
+                                                                <% } %>
                                                                    
                                                                
                                                                 <tr>
-                                                                    <td colspan="2" class="fw-bold" style="color: #959595;">Additional Discount</td>
+                                                                    <td colspan="2" class="fw-bold" style="color: #959595;">Total Discount</td>
                                                                     <td class="text-danger text-end" style="opacity: 80%;">₹<%=OriginalPrice - TotalPrice%> </td>
                                                                 </tr>
                                                                 <tr class="fw-bold">

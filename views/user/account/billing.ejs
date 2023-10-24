@@ -387,7 +387,7 @@
                 type: 'post',
                 url: "/CheckOut",
                 data: { method: selectedOption, amount, selectedAddress, coupenCode },
-                success: function (res) {
+                success: function (res) { 
                     if (res.id) {
                         var options = {
                                         key: "rzp_test_kjs3Abj9teKyq6", // Your Razorpay API Key

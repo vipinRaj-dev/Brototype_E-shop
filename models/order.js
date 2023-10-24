@@ -75,6 +75,14 @@ const userModel = require('./usermodel');
                 type:String
             }
         },
+        couponDetails:{
+            couponName:{
+                type:String
+            },
+            couponAmount:{
+                type:Number
+            }
+        },
         createdAt: {
             type: Date,
             immutable: true,

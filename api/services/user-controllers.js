@@ -914,7 +914,12 @@ const shop = async (req, res) => {
             const method = data.method;
             const amount = data.amount;
             const coupen = data.coupenCode;
-            console.log(`this is the coupenCode inside the checkout ${coupen}`);
+            let coupenAmount = 0
+            if(coupen){
+                const coupenData = await couponcollection.findOne({couponName:coupen})
+                coupenAmount = coupenData.couponValue 
+                console.log(`this is the coupenCode inside the checkout ${coupen} and this is the amount ${coupenAmount}`);
+            }
 
             
             // Data collecting for db Storing
@@ -940,6 +945,10 @@ const shop = async (req, res) => {
                     method: method,
                     amount: amount,
                     transactionId : null
+                },
+                couponDetails:{
+                    couponName:coupen,
+                    couponAmount:coupenAmount
                 },
                 status: "Processing",
                 createdAt: currentDate,
