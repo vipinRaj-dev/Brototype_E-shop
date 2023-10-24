@@ -87,7 +87,7 @@ const dashboard = async(req,res)=>{
     }catch(error){
         console.log(error.message);
     }
-}
+} 
 
 const graph = async (req, res) => {
     try { 
@@ -1080,18 +1080,40 @@ const couponsAdding = async (req, res) => {
     }
 }
 
+function dateValidation(inputDate){
+    const inputdate = new Date(inputDate)
+    const today = new Date();
+    if(inputdate >= today){
+        return true
+    }else{
+        return false
+    }
+}
+
 const couponCreation = async (req, res) => {
     try {
-        const data = req.body;
-        const couponDetails = new coupencollection({
-            couponName: data.couponName,
-            couponValue: data.couponValue,
-            expiryDate: data.expiryDate,
-            maxValue: data.maxValue,
-            minValue: data.minValue
-        })
-        await couponDetails.save();
-        res.redirect('/admin/coupons');
+        const {couponName,couponValue,expiryDate,maxValue,minValue} = req.body;
+        const isValidexpiryDate = expiryDate
+        const isValidDate =  dateValidation(isValidexpiryDate)
+        if(!isValidDate){
+            res.render('admin/add-coupen',{message:'Enter a valid date'})
+        }
+        else if (!(Number(couponValue) > 0)) {
+            res.render('admin/add-coupen', { message: 'Enter a valid value' });
+        }
+        else if (Number(minValue) > Number(maxValue)) {
+            res.render('admin/add-coupen', { message: 'Minimum value should be less than Maximum value' });
+        }else{
+            const couponDetails = new coupencollection({
+                couponName: couponName,
+                couponValue: couponValue,
+                expiryDate: expiryDate,
+                maxValue: maxValue,
+                minValue: minValue
+            })
+            await couponDetails.save();
+            res.redirect('/admin/coupons');
+        }
     } catch (error) {
         res.status(500).render('admin/coupon', { message: "Coupon Already Existing....", admin: req.session.admin });
     }

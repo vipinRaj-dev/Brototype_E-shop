@@ -368,6 +368,10 @@
             const COD = document.getElementById("COD");
             const wallet = document.getElementById("wallet");
         const amount = document.getElementById('GrantTotall').innerText;
+
+        const inputValueInput = document.getElementById("couponValue");
+        const coupenCode = inputValueInput.value;
+
             // const amount = document.getElementById("amount").value;
             // const wallet_unbalance = document.getElementById('wallet_unbalance');
             console.log(amount+"ithan amount")
@@ -386,7 +390,7 @@
             $.ajax({
                 type: 'post',
                 url: "/CheckOut",
-                data: { method: selectedOption, amount, selectedAddress },
+                data: { method: selectedOption, amount, selectedAddress ,coupenCode },
                 success: function (res) {
                     if (res.id) {
                         var options = {

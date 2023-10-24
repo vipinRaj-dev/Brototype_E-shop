@@ -913,6 +913,8 @@ const shop = async (req, res) => {
             const addressId = data.selectedAddress;
             const method = data.method;
             const amount = data.amount;
+            const coupen = data.coupenCode;
+            console.log(`this is the coupenCode inside the checkout ${coupen}`);
 
             
             // Data collecting for db Storing
@@ -953,12 +955,15 @@ const shop = async (req, res) => {
                     currency: "INR",
                     receipt: '"order_rcptid_11"',
                 })
+                await couponcollection.updateOne({ couponName: coupen }, { $push: { userId: userId } });
+
                 res.json(order);
                 // res.json("successFully online payment Completed")
 
 
         } else if (method === "COD") {
             await newOrder.save();
+            await couponcollection.updateOne({ couponName: coupen }, { $push: { userId: userId } });
             for (let values of cartItems) {
                 for (let products of cartProducts) {
                     if (new String(values.productId).trim() == new String(products._id).trim()) {
@@ -1011,6 +1016,8 @@ const shop = async (req, res) => {
                     user_data.walletbalance = w_balance;
                     await user_data.save();
                     await newOrder.save();
+                    await couponcollection.updateOne({ couponName: coupen }, { $push: { userId: userId } });
+
                     user_data.wallethistory.push({
                         process: "Payment",
                         amount:  productTotal,
@@ -1033,7 +1040,7 @@ const shop = async (req, res) => {
                     await foundUser.save();
 
                     
-        
+
                     res.json({message:"Successfully completed the payment using the wallet",newOrder});
                 } catch (error) {
                     console.log("Error during transaction:", error);
@@ -1233,10 +1240,11 @@ const coupons = async (req, res) => {
             res.json({ message: 'Coupon Not Valid' });
         } else if (couponValue) {
             const userExist = couponValue.userId.includes(userDataId);
+            // const userUsed = couponValue.coupenUsedUserId.includes(userDataId);
             if (!userExist) {
                 if (TotalAmount <= couponValue.maxValue && TotalAmount >= couponValue.minValue) {
                     // , { $push: { userId: userDataId } }
-                    await couponcollection.updateOne({ couponName: couponCode }, { $push: { userId: userDataId } });
+                    // await couponcollection.updateOne({ couponName: couponCode }, { $push: { coupenUsedUserId: userDataId } });
                     res.json({ message: 'Coupon is succefully Added', coupon: couponValue });
                 } else {
                     res.json({ message: 'It is not applicable', coupon: couponValue });
