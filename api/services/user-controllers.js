@@ -271,34 +271,34 @@ const login_post = async (req, res) => {
                         let cartCount;
 
                        //-------------add this to remove the otp validation 
-                        // req.session.user = userdata.email
-                        // console.log(req.session.user);
-                        // res.redirect('/')
+                        req.session.user = userdata.email
+                        console.log(req.session.user);
+                        res.redirect('/')
 
                          
                         //-----------add this to add the otp validation
 
-                        req.session.data = userdata.email;
-                        // otp generator
-                        try {
-                            let entrie = 0;
-                            let randomOTP = Math.floor(Math.random() * 9000) + 1000;
-                            console.log('This is your login OTP:', randomOTP);
+                        // req.session.data = userdata.email;
+                        // // otp generator
+                        // try {
+                        //     let entrie = 0;
+                        //     let randomOTP = Math.floor(Math.random() * 9000) + 1000;
+                        //     console.log('This is your login OTP:', randomOTP);
 
-                            // // Save the random OTP number to the database
-                            const newUser = new otpcollection({
-                                number: randomOTP
-                            });
+                        //     // // Save the random OTP number to the database
+                        //     const newUser = new otpcollection({
+                        //         number: randomOTP
+                        //     });
 
-                            await newUser.save();
+                        //     await newUser.save();
 
-                            res.render('user/validation', { user: req.session.user,cartCount, entrie });
-                        } catch (error) {
-                            console.log("Error generating OTP:", error);
-                            res.status(500).send("OTP error");
-                            const message = error.message;
-                            res.status(500).render('404-error', { error, message });
-                        }
+                        //     res.render('user/validation', { user: req.session.user,cartCount, entrie });
+                        // } catch (error) {
+                        //     console.log("Error generating OTP:", error);
+                        //     res.status(500).send("OTP error");
+                        //     const message = error.message;
+                        //     res.status(500).render('404-error', { error, message });
+                        // }
 
                         //------------------otp validation till this
 
@@ -857,7 +857,7 @@ const shop = async (req, res) => {
     const addressAdding = async (req, res) => {
         console.log('hey i am address adding function ');
         try {
-    
+     
             const email = req.session.user;
             const { name, houseName, street, city, state, phone, postalCode } = req.body;
     
@@ -938,12 +938,16 @@ const shop = async (req, res) => {
                 productdetails: productData,
                 payment: {
                     method: method,
-                    amount: amount
+                    amount: amount,
+                    transactionId : null
                 },
                 status: "Processing",
                 createdAt: currentDate,
                 expectedDelivery: deliveryDate
             });
+           
+            
+            
     
      
             console.log(method)
@@ -1071,6 +1075,9 @@ const shop = async (req, res) => {
     const savingData = async (req, res) => {
         console.log('inside the saving data');
         try {
+            // console.log(req.body.razorpayPaymentId);
+            const paymentId = req.body.razorpayPaymentId
+            newOrder.payment.transactionId = paymentId
             await newOrder.save();
             const email = req.session.user;
             const userData = await usercollection.findOne({ email: email });

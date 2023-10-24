@@ -37,7 +37,7 @@
                                                             <span class="me-3 fw-bold" style="font-size: 13px;color: #959595;"><span>Delivery Date :</span> <%=order.map(item=>item.expectedDelivery.toLocaleDateString())%></span>
                                                             <%if(orderCanceld === false){%>
                                                                 <%if(orderStatus == "Deliverd"){%>
-                                                                    <span class="badge rounded-pill bg-success"><%=order.map(item=>item.status)%></span>
+                                                                  <span class="badge rounded-pill bg-success"><%=order.map(item=>item.status)%></span>
                                                                 <%}else if(orderStatus == "Processing"){%>
                                                                     <span class="badge rounded-pill bg-warning"><%=order.map(item=>item.status)%></span>
                                                                 <%}else{%>
@@ -99,8 +99,16 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td colspan="2" class="fw-bold" style="color: #959595;">Payment Method</td>
-                                                                    <td class="text-end fw-bold" style="color: #959595;"><%=order.map(items=>items.payment.method)%></td>
+                                                                    <td class="text-end fw-bold" style="color: #959595;"><%=orderObject.payment.method%></td>
                                                                 </tr>
+                                                                <% if (orderObject.payment.method === "InternetBanking") { %>
+                                                                    <tr>
+                                                                        <td colspan="2" class="fw-bold" style="color: #959595;">Transaction Id</td>
+                                                                        <td class="fw-bold text-end" style="color: #959595;"><%= orderObject.payment.transactionId%> </td>
+                                                                    </tr>
+                                                                <% } %>
+                                                                   
+                                                               
                                                                 <tr>
                                                                     <td colspan="2" class="fw-bold" style="color: #959595;">Additional Discount</td>
                                                                     <td class="text-danger text-end" style="opacity: 80%;">₹<%=OriginalPrice - TotalPrice%> </td>

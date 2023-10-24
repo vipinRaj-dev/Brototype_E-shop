@@ -70,6 +70,9 @@ const userModel = require('./usermodel');
             },
             amount: {
                 type: Number,
+            },
+            transactionId:{
+                type:String
             }
         },
         createdAt: {

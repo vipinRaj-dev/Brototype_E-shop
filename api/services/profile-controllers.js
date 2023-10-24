@@ -103,7 +103,7 @@ const order = async (req, res) => {
     }
 }
 
-const orderStatus = async (req, res) => {
+const orderStatus = async (req, res) => { 
     try {
         // const user = req.session.user;
         const email = req.session.user;
@@ -122,7 +122,7 @@ const orderStatus = async (req, res) => {
         })
         
 
-        // console.log(orderProducts);
+        console.log(order);
       
         
         const address = userDetails.address.filter(item=>{
@@ -140,7 +140,7 @@ const orderStatus = async (req, res) => {
         // console.log('this is OriginalPrice ',OriginalPrice)
         const orderCanceld = order.orderCancleRequest;
         const orderStatus = order.status;
-        res.render("user/account/orderStatus", { title: "Product view", user:userDetails, cartCount, order: [order], orderProducts,TotalPrice, OriginalPrice, address: address[0], orderCanceld, orderStatus })
+        res.render("user/account/orderStatus", { title: "Product view", user:userDetails, cartCount, order: [order], orderProducts,TotalPrice, OriginalPrice, address: address[0], orderCanceld, orderStatus,orderObject:order })
     } catch (error) {
         console.log('this is the orderStatus error:'+error)
         const message = error.message
