@@ -989,8 +989,7 @@ const orderList = async (req, res) => {
        
 
         const ordersWithDataSorted = ordersWithData.sort((a, b) => b.createdAt - a.createdAt);
-        console.log('this is the ordersWithDataSorted');
-        console.log(ordersWithDataSorted);
+        
       
         res.render('admin/orders', { admin, orderList: ordersWithDataSorted })
        }else{
