@@ -122,7 +122,7 @@ const orderStatus = async (req, res) => {
         })
         
 
-        console.log(order);
+        // console.log(order);
       
         
         const address = userDetails.address.filter(item=>{
@@ -152,13 +152,20 @@ const orderStatus = async (req, res) => {
 const orderCancel = async (req, res) => {
     try {
         const id = req.params.id;
+
+        const userEmail = req.session.user;
         
             const Order = await ordercollection.findById(id)
             Order.orderCancleRequest = true;
-
-
+            
+            let totalProductsPrice = 0
             for(let product of Order.productdetails){
                 product.cancelProduct = true;
+                totalProductsPrice += product.totalPrice
+            }
+           
+            if (Order.payment.method !== "COD") {
+                await usercollection.findOneAndUpdate({ email: userEmail }, { $inc: { walletbalance: totalProductsPrice } });
             }
             // console.log(Order.productdetails);
             await Order.save()
@@ -173,44 +180,42 @@ const orderCancel = async (req, res) => {
 }
 const productCancel = async (req, res) => {
     try {
-        console.log('reached the product cancel');
-        const orderId = req.query.orderId; // Extract orderId from query parameters
-        const productId = req.query.productId; // Extract productId from query parameters
+        const orderId = req.query.orderId;
+        const productId = req.query.productId;
+        const userEmail = req.session.user;
 
-        
-       
         const order = await ordercollection.findById(orderId);
 
         if (!order) {
-            // Handle the case where the order with the given ID is not found
             return res.status(404).send('Order not found');
         }
 
-        // Find the product in the productdetails array by its ID
         const productToCancel = order.productdetails.find(product => product._id == productId);
 
         if (!productToCancel) {
-            // Handle the case where the product with the given ID is not found in the order
             return res.status(404).send('Product not found in the order');
         }
 
-        if(order.productdetails.length === 1){
-            order.orderCancleRequest = true
+        if (order.productdetails.length === 1) {
+            order.orderCancleRequest = true;
             productToCancel.cancelProduct = true;
-            
-        }else{
+
+            if (order.payment.method !== "COD") {
+                const productPrice = productToCancel.totalPrice;
+                await usercollection.findOneAndUpdate({ email: userEmail }, { $inc: { walletbalance: productPrice } });
+            }
+
+        } else {
             productToCancel.cancelProduct = true;
             order.payment.amount = order.payment.amount - productToCancel.totalPrice;
-            
-            // console.log(order.payment.amount)
+
+            if (order.payment.method !== "COD") {
+                const productPrice = productToCancel.totalPrice;
+                await usercollection.findOneAndUpdate({ email: userEmail }, { $inc: { walletbalance: productPrice } });
+            }
         }
-        // Set the cancelProduct field to true for the found product
 
-        // Save the updated order
         await order.save();
-
-        // console.log('save sussesfully');
-
         res.redirect('/profile/order');
     } catch (error) {
         console.error(error);
@@ -218,6 +223,7 @@ const productCancel = async (req, res) => {
         res.render('404-error', { error, message });
     }
 }
+
 
 
 

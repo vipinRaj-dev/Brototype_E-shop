@@ -968,7 +968,6 @@ const shop = async (req, res) => {
                     currency: "INR",
                     receipt: '"order_rcptid_11"',
                 })
-                await couponcollection.updateOne({ couponName: coupen }, { $push: { userId: userId } });
 
                 res.json(order);
                 // res.json("successFully online payment Completed")
@@ -1087,13 +1086,19 @@ const shop = async (req, res) => {
             // console.log(req.body.razorpayPaymentId);
             const paymentId = req.body.razorpayPaymentId
             newOrder.payment.transactionId = paymentId
+
+            const couponname = req.body.coupenCode
+
             await newOrder.save();
             const email = req.session.user;
             const userData = await usercollection.findOne({ email: email });
+
+            await couponcollection.updateOne({ couponName: couponname }, { $push: { userId: userData._id } });
+
             const cartItems = userData.cart.items;
             const cartProductIds = cartItems.map(item => item.productId.toString());
             const cartProducts = await productCollection.find({ _id: { $in: cartProductIds } });
-    
+            
             for (let values of cartItems) {
                 for (let product of cartProducts) {
                     if (String(values.productId).trim() === String(product._id).trim()) {

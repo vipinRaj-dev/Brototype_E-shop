@@ -400,10 +400,10 @@
                                         handler: function (response) {
                                             // This function will be called when the payment is successful
                                             const razorpayPaymentId = response.razorpay_payment_id;
-                                            $.ajax({
+                                            $.ajax({ 
                                                 type: "post",
                                                 url: "/saveOrderData",
-                                                data: { razorpayPaymentId: razorpayPaymentId },
+                                                data: { razorpayPaymentId: razorpayPaymentId , coupenCode },
                                                 success: function (response) {
                                                         console.log('Order saved successfully:', response);
                                                         // Add other UI updates or actions here
