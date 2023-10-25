@@ -140,7 +140,7 @@ const orderStatus = async (req, res) => {
         // console.log('this is OriginalPrice ',OriginalPrice)
         const orderCanceld = order.orderCancleRequest;
         const orderStatus = order.status;
-        res.render("user/account/orderStatus", { title: "Product view", user:userDetails, cartCount, order: [order], orderProducts,TotalPrice, OriginalPrice, address: address[0], orderCanceld, orderStatus,orderObject:order })
+        res.render("user/account/orderstatus", { title: "Product view", user:userDetails, cartCount, order: [order], orderProducts,TotalPrice, OriginalPrice, address: address[0], orderCanceld, orderStatus,orderObject:order })
     } catch (error) {
         console.log('this is the orderStatus error:'+error)
         const message = error.message
