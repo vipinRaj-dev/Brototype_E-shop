@@ -63,7 +63,7 @@ const userRouter = require('./routes/user')
   
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', 'views');
 app.set('view engine', 'ejs');
 //morgan
 app.use(logger('dev'));
