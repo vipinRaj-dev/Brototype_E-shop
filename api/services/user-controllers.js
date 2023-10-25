@@ -18,7 +18,11 @@ const key_secret = process.env.key_secret
 const fast2sms = require('fast-two-sms');
 const API = 'FONkjetDrTbMoQXPy2fm5YS84BRawh3s9cUAC0zl6pHqJdZv1KxzTR8oCsfw50VaWnYDGJA71FOPcKdp'
 
+const twilioPhoneNumber = '+14708656232'
+const accountSid = 'AC2380c94559b069fb10731d3a0ffb521e';
+const authToken = 'dc1a677b6a90e5595c806faac194707c';
 
+const client = new Twilio(accountSid, authToken);
 
 //hashing the passsword
 const pwdEncription = (password) => {
@@ -88,19 +92,49 @@ const signup_post = async (req, res) => {
 
                //otp generator normal console 
                         try {
-                            let randomOTP = Math.floor(Math.random() * 9000) + 1000;
-                            console.log('This is your login OTP:', randomOTP);
+                            // let randomOTP = Math.floor(Math.random() * 9000) + 1000;
+                            // console.log('This is your login OTP:', randomOTP);
                             
 
-                            // Save the random OTP number to the database
-                            const newUser = new otpcollection({
-                                number: randomOTP
-                            });
+                            // // Save the random OTP number to the database
+                            // const newUser = new otpcollection({
+                            //     number: randomOTP
+                            // });
 
-                            await newUser.save();
+                            // await newUser.save();
 
-                            res.render('user/validation', {cartCount, entrie });
-                        } catch (error) {
+                            // res.render('user/validation', {cartCount, entrie });
+
+                            const randome = Math.floor(Math.random() * 9000) + 1000;
+                                        console.log(randome);
+                            
+                                        // Send the OTP using Twilio
+                                        client.messages
+                                            .create({
+                                                body: `Your verification OTP is: ${randome}`,
+                                                from: twilioPhoneNumber,
+                                                to: '+917902992374',
+                                            })
+                                            .then(() => {
+                                                saveUser();
+                                            })
+                                            .catch((error) => {
+                                                console.error("Error sending SMS:", error);
+                                            });
+                            
+                                        function saveUser() {
+                                            const newUser = new otpcollection({
+                                                number: randome
+                                            });
+                                            newUser.save()
+                                                .then(() => {
+                                                    res.render('user/validation', { user: req.session.user, cartCount, entrie });
+                                                })
+                                                .catch((error) => {
+                                                    console.log("error generating number", error);
+                                                });
+                                        }
+                                    } catch (error) {
                             console.log("Error generating OTP:", error);
                             res.status(500).send("OTP error");
                             const message = error.message;
@@ -126,11 +160,9 @@ const signup_post = async (req, res) => {
 //signup post using the twilio
 
 
-// const accountSid = "AC0752b7cfbc2d0d3f38968c2f3cb4ca19";
-// const authToken = '9ba7898a056ef47f555bf5549bc9ee0c';
-// const twilioPhoneNumber = '+12073583606';
 
-// const client = new Twilio(accountSid, authToken);
+
+
 
 // const signup_post = async (req, res) => {
 //     try {
@@ -271,15 +303,15 @@ const login_post = async (req, res) => {
                         let cartCount;
 
                        //-------------add this to remove the otp validation 
-                        req.session.user = userdata.email
-                        console.log(req.session.user);
-                        res.redirect('/')
+                        // req.session.user = userdata.email
+                        // console.log(req.session.user);
+                        // res.redirect('/')
 
                          
                         //-----------add this to add the otp validation
 
-                        // req.session.data = userdata.email;
-                        // // otp generator
+                        req.session.data = userdata.email;
+                        // otp generator
                         // try {
                         //     let entrie = 0;
                         //     let randomOTP = Math.floor(Math.random() * 9000) + 1000;
@@ -304,34 +336,34 @@ const login_post = async (req, res) => {
 
 
                         //twilio
-                    //     let randomOTP = Math.floor(Math.random() * 9000) + 1000;
-                    //     console.log('This is your login OTP:', randomOTP);
-                    //     client.messages
+                        let randomOTP = Math.floor(Math.random() * 9000) + 1000;
+                        console.log('This is your login OTP:', randomOTP);
+                        client.messages
                         
-                    //     .create({
-                    //         body: `Your login verification OTP is: ${randomOTP}`,
-                    //         from: twilioPhoneNumber,
-                    //         to: '+917902992374',
-                    //     })
-                    //     .then(() => {
-                    //         saveUser();
-                    //     })
-                    //     .catch((error) => {
-                    //         console.error("Error sending SMS:", error);
-                    //     });
+                        .create({
+                            body: `Your login verification OTP is: ${randomOTP}`,
+                            from: twilioPhoneNumber,
+                            to: '+917902992374',
+                        })
+                        .then(() => {
+                            saveUser();
+                        })
+                        .catch((error) => {
+                            console.error("Error sending SMS:", error);
+                        });
         
-                    // function saveUser() {
-                    //     const newUser = new otpcollection({
-                    //         number: randomOTP
-                    //     });
-                    //     newUser.save()
-                    //         .then(() => {
-                    //             res.render('user/validation', { user: req.session.user, cartCount, entrie });
-                    //         })
-                    //         .catch((error) => {
-                    //             console.log("error generating number", error);
-                    //         });
-                    // }
+                    function saveUser() {
+                        const newUser = new otpcollection({
+                            number: randomOTP
+                        });
+                        newUser.save()
+                            .then(() => {
+                                res.render('user/validation', { user: req.session.user, cartCount, entrie });
+                            })
+                            .catch((error) => {
+                                console.log("error generating number", error);
+                            });
+                        }
 
 
 
