@@ -131,8 +131,8 @@ const orderStatus = async (req, res) => {
             return false;
         })
         // console.log(address)
-
-
+ 
+    
         const OriginalPrice = orderProducts.reduce((total, items) => total + (items.realPrice*items.quantity), 0);
         // const TotalPrice = orderProducts.reduce((total, items) => total + items.totalPrice, 0);
         const TotalPrice = order.payment.amount;
