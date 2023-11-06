@@ -12,7 +12,7 @@ const userAuth = require('../middleware/userAuth')
 //get home
 user_route.get('/',userController.home) 
 
-
+    
 
 
 
