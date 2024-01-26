@@ -24,10 +24,10 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const PORT = process.env.PORT || 3000;
+const PORT =3000;
 
 //mongodb connection
-mongoose.connect(process.env.DATABASE_URL) 
+mongoose.connect('mongodb://mongo:27017/ecommerce') 
   .then(() => {
     console.log("mongodb connected")
   })
@@ -81,6 +81,6 @@ app.use('/admin', adminRouter);
 
 
 
-app.listen(process.env.PORT, () => {
+app.listen(PORT, () => {
     console.log(`running on port ${PORT}`);
   })
