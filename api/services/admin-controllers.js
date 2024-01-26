@@ -420,16 +420,51 @@ const login = (req, res) => {
     console.log(error.message);
   }
 };
+// const login_post = async (req, res) => {
+//   // console.log(req.body);
+//   try {
+//     const admin = req.body;
+    
+//     const foundAdmin = await admincollection.findOne({ email: admin.email });
+//     // console.log("admin"+admin , "foundadmin" + foundAdmin )
+    
+    
+
+//     if (foundAdmin) {
+//       const password = foundAdmin.password;
+
+//       if (admin.password === password) {
+//         req.session.admin = admin.email;
+//         return res.redirect("dashboard");
+//       }
+//     }
+
+//     res.render("admin/adminlogin", {
+//       msg: "Invalid login credentials",
+//       admin: true,
+//     });
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).send("Server Error");
+//   }
+// };
+
+
 const login_post = async (req, res) => {
+  // console.log(req.body);
   try {
     const admin = req.body;
-
+    console.log('i am inside login post');
     const foundAdmin = await admincollection.findOne({ email: admin.email });
+    // console.log("admin" + admin, "foundadmin" + foundAdmin);
 
     if (foundAdmin) {
       const password = foundAdmin.password;
 
-      if (admin.password === password) {
+      // Use a secure method for comparing passwords, e.g., bcrypt.compare
+      const passwordsMatch = admin.password === password;
+
+      if (passwordsMatch) {
         req.session.admin = admin.email;
         return res.redirect("dashboard");
       }
@@ -444,6 +479,7 @@ const login_post = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
 
 const adminLogout = async (req, res) => {
   try {

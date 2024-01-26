@@ -84,10 +84,10 @@ const signup_post = async (req, res) => {
     if (!checkname) {
       //otp generator normal console
       try {
-        // let randomOTP = Math.floor(Math.random() * 9000) + 1000;
-        // console.log('This is your login OTP:', randomOTP);
+        let randomOTP = Math.floor(Math.random() * 9000) + 1000;
+        console.log('This is your login OTP:', randomOTP);
 
-        // // Save the random OTP number to the database
+        // Save the random OTP number to the database
         // const newUser = new otpcollection({
         //     number: randomOTP
         // });
@@ -96,26 +96,26 @@ const signup_post = async (req, res) => {
 
         // res.render('user/validation', {cartCount, entrie });
 
-        const randome = Math.floor(Math.random() * 9000) + 1000;
-        console.log(randome);
+        // const randome = Math.floor(Math.random() * 9000) + 1000;
+        // console.log(randome);
 
         // Send the OTP using Twilio
-        client.messages
-          .create({
-            body: `Your verification OTP is: ${randome}`,
-            from: twilioPhoneNumber,
-            to: "+917902992374",
-          })
-          .then(() => {
-            saveUser();
-          })
-          .catch((error) => {
-            console.error("Error sending SMS:", error);
-          });
+        // client.messages
+        //   .create({
+        //     body: `Your verification OTP is: ${randome}`,
+        //     from: twilioPhoneNumber,
+        //     to: "+917902992374",
+        //   })
+        //   .then(() => {
+        //     saveUser();
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error sending SMS:", error);
+        //   });
 
         function saveUser() {
           const newUser = new otpcollection({
-            number: randome,
+            number: randomOTP,
           });
           newUser
             .save()
@@ -136,6 +136,8 @@ const signup_post = async (req, res) => {
         const message = error.message;
         res.status(500).render("404-error", { error, message });
       }
+      saveUser()
+
     } else {
       const user = true;
       res.render("user/signup", {
@@ -290,52 +292,52 @@ const login_post = async (req, res) => {
           let cartCount;
 
           //-------------add this to remove the otp validation
-          // req.session.user = userdata.email
-          // console.log(req.session.user);
-          // res.redirect('/')
+          req.session.user = userdata.email
+          console.log(req.session.user);
+          res.redirect('/')
 
           //-----------add this to add the otp validation
 
           req.session.data = userdata.email;
           // otp generator
-          // try {
-          //     let entrie = 0;
-          //     let randomOTP = Math.floor(Math.random() * 9000) + 1000;
-          //     console.log('This is your login OTP:', randomOTP);
+          try {
+            let entrie = 0;
+            let randomOTP = Math.floor(Math.random() * 9000) + 1000;
+            console.log('This is your login OTP:', randomOTP);
 
-          //     // // Save the random OTP number to the database
-          //     const newUser = new otpcollection({
-          //         number: randomOTP
-          //     });
+            // // Save the random OTP number to the database
+            const newUser = new otpcollection({
+              number: randomOTP
+            });
 
-          //     await newUser.save();
+            await newUser.save();
 
-          //     res.render('user/validation', { user: req.session.user,cartCount, entrie });
-          // } catch (error) {
-          //     console.log("Error generating OTP:", error);
-          //     res.status(500).send("OTP error");
-          //     const message = error.message;
-          //     res.status(500).render('404-error', { error, message });
-          // }
+            res.render('user/validation', { user: req.session.user, cartCount, entrie });
+          } catch (error) {
+            console.log("Error generating OTP:", error);
+            res.status(500).send("OTP error");
+            const message = error.message;
+            res.status(500).render('404-error', { error, message });
+          }
 
           //------------------otp validation till this
 
           //twilio
-          let randomOTP = Math.floor(Math.random() * 9000) + 1000;
-          console.log("This is your login OTP:", randomOTP);
-          client.messages
+          // let randomOTP = Math.floor(Math.random() * 9000) + 1000;
+          // console.log("This is your login OTP:", randomOTP);
+          // client.messages
 
-            .create({
-              body: `Your login verification OTP is: ${randomOTP}`,
-              from: twilioPhoneNumber,
-              to: "+917902992374",
-            })
-            .then(() => {
-              saveUser();
-            })
-            .catch((error) => {
-              console.error("Error sending SMS:", error);
-            });
+          //   .create({
+          //     body: `Your login verification OTP is: ${randomOTP}`,
+          //     from: twilioPhoneNumber,
+          //     to: "+917902992374",
+          //   })
+          //   .then(() => {
+          //     saveUser();
+          //   })
+          //   .catch((error) => {
+          //     console.error("Error sending SMS:", error);
+          //   });
 
           function saveUser() {
             const newUser = new otpcollection({
